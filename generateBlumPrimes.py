@@ -1,6 +1,7 @@
 import os
 import sys
 from Crypto.Util import number
+import math
 
 nr_bit_size = 256
 min_bit_size = 512
@@ -42,8 +43,45 @@ def generate_needed_blum_primes():
     print(f"[VERIFIED] Modulus N has {n.bit_length()} bits.")
     return p, q, n
 
+
+
+
+#-----------------------------GENERATING THE BBS BITS FUNCTION---------------------------------
+
+def generate_bbs_bits(n, seed, nr_bits):
+    xi = seed
+    bit_seed = []
+
+    if xi <= 1 or xi >= n - 1 or math.gcd(xi, n) != 1:
+        print("[ERROR]: Seed is not valid. It should be coprime with n and different from 0 and 1")
+
+    for _ in range(nr_bits):
+        xi = pow(xi, 2)
+        xi %= n
+        bit = xi % 2
+        bit_seed.append(bit)
+
+    bit_seq = ''.join(str(bit) for bit in bit_seed)
+    key = int(bit_seq, 2)
+
+    #there's a formula by which we calculate this: the number of bytes needed to store the number of bits procided as parameters has to be round
+    byte_length = (nr_bits + 7) // 8
+
+    #we transform the generated key into bytes
+    key_bytes = key.to_bytes(byte_length, byteorder='big')
+    return key_bytes
+
+
+
 def main():
     p, q, n = generate_needed_blum_primes()
+    seed_test = 12345678901234567890123456789012345678901234567890
+    aes_key = generate_bbs_bits(n, seed_test, 128)
+
+    print("\n--- Generate BBS key: Test ---")
+    if aes_key:
+        print(f"Nr of bytes generated: {len(aes_key)}")
+        print(f"AES 128 key (Hex): {aes_key.hex()}")
 
 main()
 
