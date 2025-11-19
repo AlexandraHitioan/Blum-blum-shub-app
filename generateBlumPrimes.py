@@ -1,5 +1,7 @@
 import os
 import sys
+
+from Crypto.Random import get_random_bytes
 from Crypto.Util import number
 import math
 
@@ -73,10 +75,25 @@ def generate_bbs_bits(n, seed, nr_bits):
 
 
 
+
+#-----------------------------GENERATE THE SEED FOR THEY BBS KEY -----------------------------------------------
+def generate_bbs_seed(n):
+    seed_bytes = get_random_bytes(32)
+    x0 = int.from_bytes(seed_bytes, byteorder='big') % n
+
+    #we will regenerate the seed if it does not respect the BBS rules
+    while x0 == 1 or x0 == 0 or x0 >= n -1 or math.gcd(x0, n) != 1:
+        seed_bytes = get_random_bytes(32)
+        x0 = int.from_bytes(seed_bytes, byteorder='big') % n
+
+    return x0
+
+
+
 def main():
     p, q, n = generate_needed_blum_primes()
-    seed_test = 12345678901234567890123456789012345678901234567890
-    aes_key = generate_bbs_bits(n, seed_test, 128)
+    seed = generate_bbs_seed(n)
+    aes_key = generate_bbs_bits(n, seed, 128)
 
     print("\n--- Generate BBS key: Test ---")
     if aes_key:
