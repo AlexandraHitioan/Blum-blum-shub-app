@@ -30,19 +30,19 @@ def generate_needed_blum_primes():
 
     n = p * q
     #Documentation Output
-    print ("DOCUMENTATION")
-    print("DOCUMENTATION:")
-    print (f"P: {p}")
-    print(f"Q: {q}")
-    print(f"N: {n}")
-    print(f"Prime p (hex): {hex(p)}")
-    print(f"Condition p mod 4: {p % 4}")
-    print(f"Prime q (hex): {hex(q)}")
-    print(f"Condition q mod 4: {q % 4}")
-    print(f"Modulus N (p * q) (hex): {hex(n)}")
+    #print ("DOCUMENTATION")
+    #print("DOCUMENTATION:")
+    #print (f"P: {p}")
+    #print(f"Q: {q}")
+    #print(f"N: {n}")
+    #print(f"Prime p (hex): {hex(p)}")
+    #print(f"Condition p mod 4: {p % 4}")
+    #print(f"Prime q (hex): {hex(q)}")
+    #print(f"Condition q mod 4: {q % 4}")
+    #print(f"Modulus N (p * q) (hex): {hex(n)}")
 
-    print(f"\n[VERIFIED] Both primes satisfy p ≡ 3 (mod 4).")
-    print(f"[VERIFIED] Modulus N has {n.bit_length()} bits.")
+    #print(f"\n[VERIFIED] Both primes satisfy p ≡ 3 (mod 4).")
+    #print(f"[VERIFIED] Modulus N has {n.bit_length()} bits.")
     return p, q, n
 
 
@@ -89,17 +89,12 @@ def generate_bbs_seed(n):
     return x0
 
 
-
-def main():
-    p, q, n = generate_needed_blum_primes()
+def generate_aes_key():
+    """
+        Generates an AES key using the Blum Blum Shub implementation of 128 bits
+    """
+    _, _, n = generate_needed_blum_primes()
     seed = generate_bbs_seed(n)
     aes_key = generate_bbs_bits(n, seed, 128)
 
-    print("\n--- Generate BBS key: Test ---")
-    if aes_key:
-        print(f"Nr of bytes generated: {len(aes_key)}")
-        print(f"AES 128 key (Hex): {aes_key.hex()}")
-
-main()
-
-
+    return aes_key
