@@ -2,15 +2,19 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from generateBlumPrimes import generate_aes_key
 from encryption import AESEncryption
-import os
+from logger import (
+    log_key_generation,
+    log_encryption,
+    log_decryption,
+)
 
 
 class AESApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("AES Encryption (BBS Key Generator)")
-        self.geometry("520x300")
+        self.title("AES Encryption with a Blum-Blum-Shub Key Generator")
+        self.geometry("500x300")
         self.resizable(False, False)
 
         self.key_var = tk.StringVar()
@@ -36,6 +40,7 @@ class AESApp(tk.Tk):
     def generate_key(self):
         key = generate_aes_key()
         self.key_var.set(key.hex())
+        log_key_generation(key)
         messagebox.showinfo("Key Generated", "AES key generated successfully.")
 
     def encrypt_file(self):
@@ -52,6 +57,7 @@ class AESApp(tk.Tk):
                 return
 
             aes.encrypt(input_file, output_dir)
+            log_encryption(input_file, output_dir, key)
             messagebox.showinfo("Success", "File encrypted successfully.")
 
         except Exception as e:
@@ -74,6 +80,7 @@ class AESApp(tk.Tk):
                 return
 
             aes.decrypt(input_file, output_dir)
+            log_decryption(input_file, output_dir, key)
             messagebox.showinfo("Success", "File decrypted successfully.")
 
         except Exception as e:

@@ -1,6 +1,11 @@
 from generateBlumPrimes import generate_aes_key
 from encryption import AESEncryption
 import click
+from logger import (
+    log_key_generation,
+    log_encryption,
+    log_decryption,
+)
 
 @click.group()
 def cli():
@@ -11,6 +16,7 @@ def key_gen():
 
     key = generate_aes_key()
     click.echo(f"Your key in hexidecimal: {key.hex()}")
+    log_key_generation(key)
 
 
 @cli.command(name="encrypt")
@@ -21,6 +27,7 @@ def encrypt(key, input_file, output_dir):
 
     aes = AESEncryption(bytes.fromhex(key))
     aes.encrypt(input_file, output_dir)
+    log_encryption(input_file, output_dir, key)
 
 @cli.command(name="decrypt")
 @click.argument("key")
@@ -30,6 +37,7 @@ def decrypt(key, input_file, output_dir):
 
     aes = AESEncryption(bytes.fromhex(key))
     aes.decrypt(input_file, output_dir)
+    log_decryption(input_file, output_dir, key)
 
 
 if __name__=="__main__":
