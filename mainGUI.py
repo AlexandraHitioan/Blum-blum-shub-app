@@ -7,7 +7,8 @@ from logger import (
     log_encryption,
     log_decryption,
 )
-
+from tkinter import ttk
+from vulnerabilityGUI import vulnerabilityTab
 
 class AESApp(tk.Tk):
     def __init__(self):
@@ -22,26 +23,44 @@ class AESApp(tk.Tk):
         self.create_widgets()
 
     def create_widgets(self):
-        tk.Label(self, text="AES Key (hex)", font=("Arial", 11, "bold")).pack(pady=5)
 
-        key_frame = tk.Frame(self)
+        tabs = ttk.Notebook(self)
+
+        encryption_tool_tab = tk.Frame(tabs)
+        vulnerability_tab = tk.Frame(tabs)
+
+        tabs.add(encryption_tool_tab, text="Encryption Tool")
+        tabs.add(vulnerability_tab, text="Vulnerabilities")
+
+        tabs.pack(expand = 1, fill ="both")
+
+        key_frame = tk.Frame(encryption_tool_tab)
         key_frame.pack()
 
+        tk.Label(key_frame, text="AES Key (hex)", font=("Arial", 11, "bold")).pack(pady=5)
         tk.Entry(key_frame, textvariable=self.key_var, width=50).pack(side=tk.LEFT, padx=5)
         tk.Button(key_frame, text="Generate Key", command=self.generate_key).pack(side=tk.LEFT)
 
-        tk.Label(self, text="Encryption", font=("Arial", 11, "bold")).pack(pady=10)
-        tk.Button(self, text="Encrypt File", width=25, command=self.encrypt_file).pack(pady=5)
 
-        tk.Label(self, text="Decryption", font=("Arial", 11, "bold")).pack(pady=10)
-        tk.Button(self, text="Decrypt File", width=25, command=self.decrypt_file).pack(pady=5)
+        encryption_frame = tk.Frame(encryption_tool_tab)
+        encryption_frame.pack()
 
+        tk.Label(encryption_frame, text="Encryption", font=("Arial", 11, "bold")).pack(pady=10)
+        tk.Button(encryption_frame, text="Encrypt File", width=25, command=self.encrypt_file).pack(pady=5)
+
+        tk.Label(encryption_frame, text="Decryption", font=("Arial", 11, "bold")).pack(pady=10)
+        tk.Button(encryption_frame, text="Decrypt File", width=25, command=self.decrypt_file).pack(pady=5)
+
+        vulnerability_frame = vulnerabilityTab(vulnerability_tab)
+        vulnerability_frame.pack()
+    
 
     def generate_key(self):
         key = generate_aes_key()
         self.key_var.set(key.hex())
         log_key_generation(key)
         messagebox.showinfo("Key Generated", "AES key generated successfully.")
+        
 
     def encrypt_file(self):
         try:
@@ -85,6 +104,8 @@ class AESApp(tk.Tk):
 
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    
 
 
 if __name__ == "__main__":
